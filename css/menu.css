@@ -1,8 +1,168 @@
 body {
-    
     min-height: 100vh;
     background-image: url(../img/Group\ 1-min.jpg);
     background-position: center;
     background-size: cover;
     overflow-x: hidden;
+    padding-top: 120px;
+}
+
+.container {
+    padding: 0 20px 0
+}
+
+nav {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 40px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: var(--color2);
+    z-index: 14;
+    border-radius: 0 0 20px 20px;
+}
+
+.nav__elements {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav__links {
+    display: flex;
+    gap: 20px;
+}
+
+.nav__links a {
+    font-size: 20px;
+    line-height: 100%;
+    font-weight: 400;
+    text-decoration: none;
+    color: var(--color1);
+}
+
+.nav__buttons {}
+
+.basket-btn {
+    font-size: 24px;
+    line-height: 100%;
+    color: var(--color1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background-color: var(--color2);
+    border: 3px solid var(--color1);
+    border-radius: 34%;
+    z-index: 2;
+    transition: 0.5s;
+    position: relative;
+    left: 0;
+}
+
+.basket-clouse-btn {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    top: 20px;
+    right: 20px;
+    z-index: 1;
+    background-color: transparent;
+    border: none;
+    color: var(--color1);
+    font-size: 30px;
+    opacity: 0;
+    transition: 0.5s;
+}
+
+.basket-btn.button_moveLeft {
+    left: -48px;
+    transition: 0.5s;
+}
+
+.basket-clouse-btn.basket-clouse_active {
+    opacity: 1;
+}
+
+/*КАТЕГОРИИ*/
+
+.categories-list {
+    padding: 14px 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    gap: 16px;
+    overflow-x: scroll;
+}
+
+.categories-btn {
+    font-size: 16px;
+    color: var(--color1);
+    background-color: var(--color2);
+    padding: 10px 16px;
+    border: var(--color1) 1px solid;
+    border-radius: 10px;
+    width: max-content;
+    min-width: 60%;
+    max-width: 280px;
+}
+
+.categories-btn.categories-btn_active {
+    background-color: var(--color3);
+}
+
+/*МЕНЮ*/
+
+.card-list {
+    display: flex;
+    overflow-x: scroll;
+    gap: 20px;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.521);
+}
+
+.card {
+    border-radius: 22px;
+    border: 1px solid var(--color1);
+    background-color: var(--color2);
+    width: calc(100vw - 60px);
+    max-width: 570px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.card__photo {
+    width: 100%;
+    height: 200px;
+    border-radius: 0 0 22px 22px;
+    object-fit: cover;
+    object-position: center;
+}
+
+.card__text {
+
+}
+
+.card__info {
+
+}
+
+.portions-list {
+
+}
+
+.portions-item {
+
+}
+
+.portions-item__info {
+
+}
+
+.portions-item__buttons {
+
 }

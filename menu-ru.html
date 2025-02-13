@@ -1,13 +1,69 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Меню</title>
     <link rel="stylesheet" href="./css/global.css">
     <link rel="stylesheet" href="./css/menu.css">
+
+    <script src="https://kit.fontawesome.com/0dfb09cd7e.js" crossorigin="anonymous" defer></script>
 </head>
+
 <body>
-    
+    <nav>
+        <div class="container">
+            <div class="nav__elements">
+                <div class="nav__links">
+                    <a href="#">EN</a>
+                </div>
+
+                <div class="nav__buttons">
+                    <button class="basket-btn">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                    </button>
+                    <button class="basket-clouse-btn">
+                        <i class="fa-solid fa-reply"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="categories-list">
+        <button class="categories-btn categories-btn_active">Суши</button>
+        <button class="categories-btn">Молочные Коктейли</button>
+    </div>
+
+    <div class="card-list">
+        <div class="card">
+            <img class="card__photo" src="https://i.postimg.cc/PJYv8HS8/capuchino.jpg" alt="">
+            <div class="card__text">
+                <div class="card__info">
+                    <h2>Американо</h2>
+                    <p>Кофе со льдом</p>
+                </div>
+
+                <div class="portions-list">
+                    <div class="portions-item">
+                        <div class="portions-item__info">
+                            <p>
+                                <span>120 ml -</span>
+                                <span>290₽</span>
+                            </p>
+                        </div>
+
+                        <div class="portions-item__buttons">
+                            <button><i class="fa-solid fa-minus"></i></button>
+                            <span></span>
+                            <button><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
+
 </html>
