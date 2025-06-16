@@ -123,7 +123,7 @@ nav {
 .basket-box h2 {
     color: var(--color1);
     font-size: 24px;
-    
+
 }
 
 .basket-cost {
@@ -135,13 +135,11 @@ nav {
     align-items: center;
 }
 
-.basket-cost p {
-    
-}
+.basket-cost p {}
 
- .basket-cost  span {
-    font-size: 20px; 
-    font-weight: 800; 
+.basket-cost span {
+    font-size: 20px;
+    font-weight: 800;
 }
 
 
@@ -153,6 +151,7 @@ nav {
     width: 100%;
     max-width: 500px;
     padding: 0 20px 0 20px;
+    flex-grow: 1;
 }
 
 .basket-box__btn-order {
@@ -163,6 +162,7 @@ nav {
     border: var(--color1) 1px solid;
     border-radius: 10px;
     animation: out-moving 1s infinite alternate linear;
+    display: none;
 }
 
 @keyframes out-moving {
@@ -186,7 +186,7 @@ nav {
 }
 
 .basket-list-div::-webkit-scrollbar-track {
-    background-color: var(--color3); 
+    background-color: var(--color3);
 }
 
 .basket-list-div::-webkit-scrollbar-thumb {
@@ -212,7 +212,7 @@ nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    
+
     gap: 10px;
 }
 
@@ -220,11 +220,11 @@ nav {
     background-color: white;
     width: 150px;
     height: 90px;
+    object-fit: cover;
+    object-position: center;
 }
 
-.basket-card-info .basket-card__info {
-
-}
+.basket-card-info .basket-card__info {}
 
 .basket-card-info .basket-card__info h3 {
     color: var(--color3);
@@ -251,11 +251,12 @@ nav {
     color: var(--color1);
 }
 
- 
- 
 
 
-.basket-card__buttons button, .basket-card__buttons span {
+
+
+.basket-card__buttons button,
+.basket-card__buttons span {
     width: 40px;
     height: 40px;
     border-radius: 8px;
@@ -287,7 +288,7 @@ nav {
 }
 
 .categories-list::-webkit-scrollbar-track {
-    background-color: transparent; 
+    background-color: transparent;
 }
 
 .categories-list::-webkit-scrollbar-thumb {
@@ -327,7 +328,7 @@ nav {
 }
 
 .card-list::-webkit-scrollbar-track {
-    background-color: transparent; 
+    background-color: transparent;
 }
 
 .card-list::-webkit-scrollbar-thumb {
@@ -404,7 +405,8 @@ nav {
     gap: 10px;
 }
 
-.portions-item__buttons button, .portions-item__buttons span {
+.portions-item__buttons button,
+.portions-item__buttons span {
     width: 40px;
     height: 40px;
     border-radius: 8px;
@@ -455,11 +457,11 @@ footer {
         }
 
         &:hover {
-                border: rgb(218, 218, 218) 2px solid;
+            border: rgb(218, 218, 218) 2px solid;
+            color: rgb(218, 218, 218);
+
+            & i {
                 color: rgb(218, 218, 218);
-        
-                & i {
-                    color: rgb(218, 218, 218);
             }
         }
     }
@@ -470,11 +472,102 @@ footer {
 }
 
 ::-webkit-scrollbar-track {
-    background-color: var(--color3); 
+    background-color: var(--color3);
 }
 
 ::-webkit-scrollbar-thumb {
     background-color: var(--color1);
     border-radius: 10px;
     border: 4px solid var(--color3);
+}
+
+
+
+.wrapper {
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 15;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.wrapper_active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.dialog-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color2);
+    box-shadow: 0px 0px 10px var(--color1);
+    padding: 30px 15px;
+    border-radius: 20px;
+    gap: 16px;
+    margin: 20px;
+    width: calc(100% - 40px);
+    max-width: 500px;
+}
+
+.dialog-box p {
+    color: var(--color1);
+    font-size: 16px;
+    display: flex;
+    text-align: center;
+}
+
+.dialog-box input {
+    display: flex;
+    text-align: center;
+    width: 350px;
+    font-size: 20px;
+    padding: 10px 0;
+    border-radius: 10px;
+    transition: 0.3s;
+    width: 100%;
+    border: none;
+    margin-bottom: 10px;
+}
+
+.dialog-box input:focus {
+    outline: none;
+    transform: scale(105%);
+}
+
+.dialog-box__buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.dialog-box__ok {
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: var(--color3);
+    color: var(--color1);
+    font-size: 16px;
+    transition: 0.3s;
+    width: 100%;
+}
+
+.dialog-box__cansel {
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: var(--color1);
+    color: var(--color2);
+    font-size: 16px;
+    transition: 0.3s;
+    width: 100%;
 }

@@ -37,189 +37,30 @@
         <h2>Корзина:</h2>
         <div class="basket-cost">
             <p>Стоимость блюд в корзине:</p>
-            <span>11900$</span>
+            <span class="basket-cost-span">0₽</span>
         </div>
-        <div class="basket-list-div">
-
-            <div class="basket-card-div">
-                <div class="basket-head">
-                    <img class="basket-card__photo" src="https://i.postimg.cc/PJYv8HS8/capuchino.jpg" alt="">
-                    <div class="basket-card__manager">
-                        <div class="basket-card__buttons">
-                            <button class="btn-minus"><i class="fa-solid fa-minus"></i></button>
-                            <span>0</span>
-                            <button class="btn-plus"><i class="fa-solid fa-plus"></i></button>
-                        </div>
-                        <span class="basket-card__total-cost">2000$</span> 
-                    </div>
-                </div>
-                <div class="basket-card-info">
-                    <div class="basket-card__info">
-                        <h2>Американо</h2>
-                        <h3>Americano</h3>
-                        <p><span>120 ml</span>-<span>290₽</span></p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="basket-card-div">
-                <div class="basket-head">
-                    <img class="basket-card__photo" src="https://i.postimg.cc/PJYv8HS8/capuchino.jpg" alt="">
-                    <div class="basket-card__manager">
-                        <div class="basket-card__buttons">
-                            <button class="btn-minus"><i class="fa-solid fa-minus"></i></button>
-                            <span>0</span>
-                            <button class="btn-plus"><i class="fa-solid fa-plus"></i></button>
-                        </div>
-                        <span class="basket-card__total-cost">2000$</span> 
-                    </div>
-                </div>
-                <div class="basket-card-info">
-                    <div class="basket-card__info">
-                        <h2>Американо</h2>
-                        <h3>Americano</h3>
-                        <p><span>120 ml</span>-<span>290₽</span></p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="basket-card-div">
-                <div class="basket-head">
-                    <img class="basket-card__photo" src="https://i.postimg.cc/PJYv8HS8/capuchino.jpg" alt="">
-                    <div class="basket-card__manager">
-                        <div class="basket-card__buttons">
-                            <button class="btn-minus"><i class="fa-solid fa-minus"></i></button>
-                            <span>0</span>
-                            <button class="btn-plus"><i class="fa-solid fa-plus"></i></button>
-                        </div>
-                        <span class="basket-card__total-cost">2000$</span> 
-                    </div>
-                </div>
-                <div class="basket-card-info">
-                    <div class="basket-card__info">
-                        <h2>Американо</h2>
-                        <h3>Americano</h3>
-                        <p><span>120 ml</span>-<span>290₽</span></p>
-                    </div>
-                </div>
-            </div>
-
-        </div>
+        <div class="basket-list-div"></div>
         <button id="btnSendOrder" class="basket-box__btn-order">Отправить заказ</button>
     </div>
 
     <div id="categoriesList" class="categories-list"></div>
 
-    <div id="menuCardList" class="card-list">
-        <div class="card">
-            <img class="card__photo" src="https://i.postimg.cc/PJYv8HS8/capuchino.jpg" alt="">
-            <div class="card__text">
-                <div class="card__info">
-                    <h2>Американо</h2>
-                    <p>Кофе со льдом</p>
-                </div>
+    <div id="menuCardList" class="card-list"></div>
 
-                <div class="portions-list">
-                    <div class="portions-item">
-                        <p class="portions-item__info">
-                            <span class="portions-item__name">120 ml -</span>
-                            <span class="portions-item__cost">290₽</span>
-                        </p>
-                        <div class="portions-item__buttons">
-                            <button class="btn-minus"><i class="fa-solid fa-minus"></i></button>
-                            <span>0</span>
-                            <button class="btn-plus"><i class="fa-solid fa-plus"></i></button>
-                        </div>
-                    </div>
 
-                    <div class="portions-item">
-                        <p class="portions-item__info">
-                            <span class="portions-item__name">250 ml -</span>
-                            <span class="portions-item__cost">360₽</span>
-                        </p>
-                        <div class="portions-item__buttons">
-                            <button class="btn-minus"><i class="fa-solid fa-minus"></i></button>
-                            <span>0</span>
-                            <button class="btn-plus"><i class="fa-solid fa-plus"></i></button>
-                        </div>
-                    </div>
-                </div>
+
+    <div class="wrapper">
+        <!-- <div class="dialog-box">
+            <p>Пожалуйста введите номер стола</p>
+            <input id="tableNumberInput" type="number" placeholder="№">
+            <div class="dialog-box__buttons">
+                <button class="dialog-box__ok">Ок</button>
+                <button class="dialog-box__cansel">Отмена</button>
             </div>
-        </div>
-
-        <div class="card">
-            <img class="card__photo" src="https://i.postimg.cc/PJYv8HS8/capuchino.jpg" alt="">
-            <div class="card__text">
-                <div class="card__info">
-                    <h2>Американо</h2>
-                    <p>Кофе со льдом</p>
-                </div>
-
-                <div class="portions-list">
-                    <div class="portions-item">
-                        <p class="portions-item__info">
-                            <span class="portions-item__name">120 ml -</span>
-                            <span class="portions-item__cost">290₽</span>
-                        </p>
-                        <div class="portions-item__buttons">
-                            <button class="btn-minus"><i class="fa-solid fa-minus"></i></button>
-                            <span>0</span>
-                            <button class="btn-plus"><i class="fa-solid fa-plus"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <img class="card__photo" src="https://i.postimg.cc/PJYv8HS8/capuchino.jpg" alt="">
-            <div class="card__text">
-                <div class="card__info">
-                    <h2>Американо</h2>
-                    <p>Кофе со льдом</p>
-                </div>
-
-                <div class="portions-list">
-                    <div class="portions-item">
-                        <p class="portions-item__info">
-                            <span class="portions-item__name">120 ml -</span>
-                            <span class="portions-item__cost">290₽</span>
-                        </p>
-                        <div class="portions-item__buttons">
-                            <button class="btn-minus"><i class="fa-solid fa-minus"></i></button>
-                            <span>0</span>
-                            <button class="btn-plus"><i class="fa-solid fa-plus"></i></button>
-                        </div>
-                    </div>
-
-                    <div class="portions-item">
-                        <p class="portions-item__info">
-                            <span class="portions-item__name">250 ml -</span>
-                            <span class="portions-item__cost">360₽</span>
-                        </p>
-                        <div class="portions-item__buttons">
-                            <button class="btn-minus"><i class="fa-solid fa-minus"></i></button>
-                            <span>0</span>
-                            <button class="btn-plus"><i class="fa-solid fa-plus"></i></button>
-                        </div>
-                    </div>
-
-                    <div class="portions-item">
-                        <p class="portions-item__info">
-                            <span class="portions-item__name">370 ml -</span>
-                            <span class="portions-item__cost">430₽</span>
-                        </p>
-                        <div class="portions-item__buttons">
-                            <button class="btn-minus"><i class="fa-solid fa-minus"></i></button>
-                            <span>0</span>
-                            <button class="btn-plus"><i class="fa-solid fa-plus"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        </div> -->
     </div>
+
+    
 
     <footer>
         <a href="https://maps.app.goo.gl/maiAbeZuX46aa3t7A">

@@ -25,6 +25,15 @@ const basketBtnClouse = document.querySelector('.basket-clouse-btn');
 
 const basketBox = document.querySelector('.basket-box');
 
+const btnSendOrder = document.getElementById('btnSendOrder');
+const basketCostSpan = document.querySelector('.basket-cost-span');                // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ КОТОРЫЕ ХРАНЯТСЯ В ДОКУМЕНТЕ
+
+const wrapper = document.querySelector('.wrapper');
+
+
+let activeCategory;
+let tableNumber;
+
 basketBtnOpen.addEventListener('click', () => {
     basketBtnOpen.classList.toggle('move-left');
     basketBtnClouse.classList.toggle('show');
@@ -36,6 +45,10 @@ basketBtnClouse.addEventListener('click', () => {
     basketBtnClouse.classList.remove('show');
     basketBox.classList.remove('show');
 })
+
+
+
+
 
 function categoriesBtnsRender() {
     const categoriesListDiv = document.getElementById('categoriesList');
@@ -69,6 +82,7 @@ function categoriesBtnsRender() {
 }
 
 function categoriesCardsRender(category) {
+    activeCategory = category;
     console.log(category);
     menuCardList.innerHTML = '';
 
@@ -160,11 +174,24 @@ function categoriesCardsRender(category) {
 function updateBasket(portionData) {
     const cardInMenu = menuCardList.querySelector(`[data-id="${portionData.cardId}"]`);
     console.log(cardInMenu);
+    console.log(portionData);
+
     if (portionData.action == 'plus') {
         const portionCardInBasket = BASKET_DATA_STORE.find(basketCard => basketCard.portionId == portionData.portionId);
         if (portionCardInBasket) {
             portionCardInBasket.portionAmaunt++;
             portionData.amauntSpan.innerText = portionCardInBasket.portionAmaunt;
+            if (portionData.buttonType == 'basket') {
+                if (cardInMenu) {
+                    const portionInCardMenu = cardInMenu.querySelector(`[data-id="${portionData.portionId}"]`);
+                    if (portionInCardMenu) {
+                        const amauntSpanInCardMenu = portionInCardMenu.querySelector('.amaunt');
+                        if (amauntSpanInCardMenu) {
+                            amauntSpanInCardMenu.innerText = portionCardInBasket.portionAmaunt;
+                        }
+                    }
+                }
+            }
         } else {
             const newCardInBasket = {
                 cardId: portionData.cardId,
@@ -185,28 +212,51 @@ function updateBasket(portionData) {
         if (cardInMenu) {
             cardInMenu.classList.add('card_active');
         }
-    } else {
+    } else { // if minus
         const portionCardInBasket = BASKET_DATA_STORE.find(basketCard => basketCard.portionId == portionData.portionId);
         if (portionCardInBasket) {
             portionCardInBasket.portionAmaunt--;
             portionData.amauntSpan.innerText = portionCardInBasket.portionAmaunt;
+            if (portionData.buttonType == 'basket') {
+                if (cardInMenu) {
+                    const portionInCardMenu = cardInMenu.querySelector(`[data-id="${portionData.portionId}"]`);
+                    if (portionInCardMenu) {
+                        const amauntSpanInCardMenu = portionInCardMenu.querySelector('.amaunt');
+                        if (amauntSpanInCardMenu) {
+                            amauntSpanInCardMenu.innerText = portionCardInBasket.portionAmaunt;
+                        }
+                    }
+                }
+            }
             if (portionCardInBasket.portionAmaunt == 0) {
                 BASKET_DATA_STORE = BASKET_DATA_STORE.filter(basketCard => basketCard.portionId != portionData.portionId);
                 const copyIdCard = BASKET_DATA_STORE.find(basketCard => basketCard.cardId == portionData.cardId);
+
                 if (!copyIdCard) {
                     cardInMenu.classList.remove('card_active');
                 }
             }
         }
     }
-    console.log(BASKET_DATA_STORE);
+    if (BASKET_DATA_STORE.length > 0) {
+        btnSendOrder.style.display = "block";
+    } else {
+        btnSendOrder.style.display = "none";
+    }
+
     basketCardRender();
 }
 
 function basketCardRender() {
     const basketListDiv = document.querySelector('.basket-list-div');
     basketListDiv.innerHTML = '';
+
+    let basketTotalCost = 0;
+
     BASKET_DATA_STORE.forEach(basketItem => {
+
+        basketTotalCost += basketItem.portionCost * basketItem.portionAmaunt; // 
+
         const basketCardDiv = document.createElement('div');
         basketCardDiv.className = 'basket-card-div';
         basketCardDiv.dataset.id = basketItem.portionId;
@@ -216,7 +266,7 @@ function basketCardRender() {
                 <div class="basket-card__manager">
                     <div class="basket-card__buttons">
                         <button class="btn-minus"><i class="fa-solid fa-minus"></i></button>
-                        <span>${basketItem.portionAmaunt}</span>
+                        <span class="amaunt-span">${basketItem.portionAmaunt}</span>
                         <button class="btn-plus"><i class="fa-solid fa-plus"></i></button>
                     </div>
                     <span class="basket-card__total-cost">${basketItem.portionCost * basketItem.portionAmaunt}₽</span>
@@ -230,6 +280,107 @@ function basketCardRender() {
                 </div>
             </div>
         `;
+        const btnPlus = basketCardDiv.querySelector('.btn-plus');
+        const btnMinus = basketCardDiv.querySelector('.btn-minus');
+        const amauntSpan = basketCardDiv.querySelector('.amaunt-span');
+
+        const portionData = {
+            action: '',
+            cardId: basketItem.cardId,
+            portionId: basketItem.portionId,
+            cardNameUserLang: basketItem.cardNameUserLang,
+            cardNameMainLang: basketItem.cardNameMainLang,
+            category: basketItem.category,
+            srcImg: basketItem.imgSrc,
+            buttonType: 'basket',
+            amauntSpan: amauntSpan,
+            portionCost: basketItem.portionCost,
+            portionName: basketItem.portionName
+        };
+
+        btnPlus.addEventListener('click', () => {
+            portionData.action = 'plus';
+            updateBasket(portionData);
+        });
+
+        btnMinus.addEventListener('click', () => {
+            portionData.action = 'minus';
+            updateBasket(portionData);
+        });
+
         basketListDiv.appendChild(basketCardDiv);
     });
+
+    console.log(basketTotalCost);
+
+    basketCostSpan.innerText = basketTotalCost + '₽';
 }
+
+
+
+btnSendOrder.addEventListener('click', () => {
+    if (typeof tableNumber === 'number') {
+        console.log('Номер стола - это число');
+    } else {
+        createDialogBox('reqestTableNumber', 'Пожалуйста введите номер стола');
+    }
+})
+
+function createDialogBox(type, text) {
+    wrapper.innerHTML = '';
+    switch (type) {
+        case 'reqestTableNumber': {
+            const dialogBoxDiv = document.createElement('div');
+            dialogBoxDiv.className = 'dialog-box';
+            dialogBoxDiv.innerHTML = `
+                <p>${text}</p>
+                <input class="table-number-input" type="number" placeholder="№">
+                <div class="dialog-box__buttons">
+                    <button class="dialog-box__ok">Ок</button>
+                    <button class="dialog-box__cansel">Отмена</button>
+                </div>
+            `
+            const dialogBoxOk = dialogBoxDiv.querySelector('.dialog-box__ok');
+            const dialogBoxCansel = dialogBoxDiv.querySelector('.dialog-box__cansel');
+            const tableNumberInput = dialogBoxDiv.querySelector('.table-number-input');
+
+            dialogBoxOk.addEventListener('click', () => {
+                const inputValue = tableNumberInput.value.trim();
+                const InputValueNumber = Number(inputValue);
+            
+                if (inputValue !== '' && Number.isInteger(InputValueNumber)) {
+                    tableNumber = inputValue;
+                    tableNumberInput.value = '';
+                    wrapper.classList.remove('wrapper_active');
+            
+                    console.log('Номер стола: ' + tableNumber);
+                } else {
+                    dialogBoxDiv.querySelector('p').innerText = 'Пожалуйста, введите ЦЕЛОЕ число';
+                }
+            });
+            
+            
+            dialogBoxCansel.addEventListener('click', () => {
+                wrapper.classList.remove('wrapper_active')
+            })
+
+            wrapper.appendChild(dialogBoxDiv);
+            wrapper.classList.add('wrapper_active');
+            break
+        }
+
+            ;
+
+        default:
+            break;
+    }
+
+}
+
+function createMessageToTg() {
+
+}
+
+
+
+

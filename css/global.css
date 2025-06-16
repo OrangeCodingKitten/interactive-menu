@@ -13,3 +13,8 @@ body {
     --color2: black;
     --color3: #6B6452;
 }
+
+button:active {
+    transform: scale(105%);
+    transition: 0.1s;
+}
