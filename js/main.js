@@ -1,9 +1,13 @@
 import { getDataStore } from './getDataStore.js'
 
 let BASKET_DATA_STORE = [];
+
+let ORDER_DATA_STORE = [];
+
 const MENU_DATA_STORE = [];
 const USER_LANG = document.documentElement.lang;
 const MAIN_LANG = 'ru';
+const currency = '₽';
 
 const menuCardList = document.getElementById('menuCardList');
 
@@ -33,6 +37,8 @@ const wrapper = document.querySelector('.wrapper');
 
 let activeCategory;
 let tableNumber;
+let orderNumberForTg;
+let orderNumberForHtml;
 
 basketBtnOpen.addEventListener('click', () => {
     basketBtnOpen.classList.toggle('move-left');
@@ -129,7 +135,7 @@ function categoriesCardsRender(category) {
                     portionItemDiv.innerHTML = `
                     <p class="portions-item__info">
                         <span class="portions-item__name">${portionName} -</span>
-                        <span class="portions-item__cost">${portionCost}₽</span>
+                        <span class="portions-item__cost">${portionCost}${currency}</span>
                     </p>
                     <div class="portions-item__buttons">
                         <button class="btn-minus"><i class="fa-solid fa-minus"></i></button>
@@ -238,11 +244,6 @@ function updateBasket(portionData) {
             }
         }
     }
-    if (BASKET_DATA_STORE.length > 0) {
-        btnSendOrder.style.display = "block";
-    } else {
-        btnSendOrder.style.display = "none";
-    }
 
     basketCardRender();
 }
@@ -269,14 +270,14 @@ function basketCardRender() {
                         <span class="amaunt-span">${basketItem.portionAmaunt}</span>
                         <button class="btn-plus"><i class="fa-solid fa-plus"></i></button>
                     </div>
-                    <span class="basket-card__total-cost">${basketItem.portionCost * basketItem.portionAmaunt}₽</span>
+                    <span class="basket-card__total-cost">${basketItem.portionCost * basketItem.portionAmaunt}${currency}</span>
                 </div>
             </div>
             <div class="basket-card-info">
                 <div class="basket-card__info">
                     <h2>${basketItem.cardNameUserLang}</h2>
                     <h3>${basketItem.cardNameMainLang}</h3>
-                    <p><span>${basketItem.portionName}</span>-<span>${basketItem.portionCost}₽</span></p>
+                    <p><span>${basketItem.portionName}</span>-<span>${basketItem.portionCost}${currency}</span></p>
                 </div>
             </div>
         `;
@@ -313,7 +314,14 @@ function basketCardRender() {
 
     console.log(basketTotalCost);
 
-    basketCostSpan.innerText = basketTotalCost + '₽';
+    basketCostSpan.innerText = `${basketTotalCost} ${currency}`;
+
+
+    if (BASKET_DATA_STORE.length > 0) {
+        btnSendOrder.style.display = "block";
+    } else {
+        btnSendOrder.style.display = "none";
+    }
 }
 
 
@@ -347,19 +355,21 @@ function createDialogBox(type, text) {
             dialogBoxOk.addEventListener('click', () => {
                 const inputValue = tableNumberInput.value.trim();
                 const InputValueNumber = Number(inputValue);
-            
+
                 if (inputValue !== '' && Number.isInteger(InputValueNumber)) {
                     tableNumber = inputValue;
                     tableNumberInput.value = '';
                     wrapper.classList.remove('wrapper_active');
-            
+
+                    createMessageToTg('newOrder');
+
                     console.log('Номер стола: ' + tableNumber);
                 } else {
                     dialogBoxDiv.querySelector('p').innerText = 'Пожалуйста, введите ЦЕЛОЕ число';
                 }
             });
-            
-            
+
+
             dialogBoxCansel.addEventListener('click', () => {
                 wrapper.classList.remove('wrapper_active')
             })
@@ -377,10 +387,124 @@ function createDialogBox(type, text) {
 
 }
 
-function createMessageToTg() {
+function createMessageToTg(type) {
+    let messageTitle = ``;
+    let messageHead = ``;
+    let messageBody = ``;
+    let messageFooter = ``;
 
+    switch (type) {
+        case 'newOrder': {
+            createOrderNumber();
+            messageTitle = `🔴Новый заказ`;
+            messageHead = `
+Язык посетителя - ${USER_LANG}
+Номер стола - ${tableNumber}
+Номер заказа - ${orderNumberForTg}
+            `;
+            messageBody = `📃 Список блюд:`;
+            let numberBasketItem = 0;
+            let basketTotalCost = 0;
+            BASKET_DATA_STORE.forEach(basketItem => {
+                numberBasketItem++;
+                const basketItemName = basketItem.cardNameMainLang;
+                const basketItemCategory = basketItem.category;
+                const basketItemPortionName = basketItem.portionName;
+                const basketItemAmaunt = basketItem.portionAmaunt;
+                const basketItemCost = basketItem.portionCost * basketItemAmaunt;
+                messageBody += `
+${numberBasketItem}. ${basketItemName} (${basketItemCategory})
+${basketItemPortionName} × ${basketItemAmaunt} = ${basketItemCost}${currency}
+                `
+                basketTotalCost += basketItemCost;
+            });
+            messageFooter = `
+💰 Стоимость заказа: ${basketTotalCost}${currency}
+                `;
+            let fullMessageText = `
+${messageTitle}
+${messageHead}
+${messageBody}
+${messageFooter}
+                `
+            console.log(fullMessageText);
+            sendMessangeToTg(fullMessageText);
+
+            break;
+
+        }
+
+        default:
+            break;
+    }
 }
 
 
 
 
+function createOrderNumber() {
+    // Создаём объект Date с текущими датой и временем
+    const now = new Date();
+    console.log(now);
+
+
+    // Получаем день, месяц, год
+    const day = now.getDate();
+    const month = now.getMonth() + 1; // Месяцы начинаются с 0 (январь — 0, декабрь — 11)
+    const year = now.getFullYear();
+
+    // Получаем часы, минуты, секунды
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+
+    // Форматируем день, месяц, год с ведущими нулями
+    const formattedDay = day < 10 ? '0' + day : day;
+    const formattedMonth = month < 10 ? '0' + month : month;
+    const formattedYear = year;  // Год всегда 4 цифры
+
+    // Форматируем время с ведущими нулями
+    const formattedHours = hours < 10 ? '0' + hours : hours;
+    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+    const formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+
+    orderNumberForTg = `#N${formattedDay}_${formattedMonth}_${formattedYear}__${formattedHours}_${formattedMinutes}_${formattedSeconds}__${tableNumber}`;
+    orderNumberForHtml = `${formattedDay}.${formattedMonth}.${formattedYear} ${formattedHours}:${formattedMinutes}:${formattedSeconds} ${tableNumber}`
+
+    console.log(orderNumberForTg);
+    console.log(orderNumberForHtml);
+}
+
+function sendMessangeToTg(text) {
+    const token = '8160508697:AAFJDed_MsKSYqDUgxQUDmiOJ_e-4oSc6Hw';
+    const chatId = '7705038030';
+    const url = `https://api.telegram.org/bot${token}/sendMessage`;
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            chat_id: chatId,
+            text: text
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.ok) {
+                console.log('Сообщение успешно отправлено');
+
+                ORDER_DATA_STORE.unshift(...BASKET_DATA_STORE);
+                BASKET_DATA_STORE = [];
+                basketCardRender();
+                categoriesCardsRender(activeCategory);
+
+            } else {
+                console.error('Ошибка при отправке:', data);
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка запроса:', error);
+        });
+}
