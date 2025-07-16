@@ -35,6 +35,11 @@ const basketCostSpan = document.querySelector('.basket-cost-span');             
 const wrapper = document.querySelector('.wrapper');
 
 
+const btnYourOrder = document.querySelector('.btn-your-order');
+const divYourOrder = document.querySelector('.div-your-order');
+const yourOrderBtnClose = document.querySelector('.your-order-btn-close');
+const yourOrderCost = document.querySelector('.your-order-cost');
+
 let activeCategory;
 let tableNumber;
 let orderNumberForTg;
@@ -500,6 +505,10 @@ function sendMessangeToTg(text) {
                 basketCardRender();
                 categoriesCardsRender(activeCategory);
 
+                btnYourOrder.textContent = `Ваш заказ: ${orderNumberForHtml}`
+                btnYourOrder.style.display = 'block';
+                // yourOrderCost.textContent = `Стоимость всех блюд: ${basketTotalCost}`
+
             } else {
                 console.error('Ошибка при отправке:', data);
             }
@@ -507,4 +516,12 @@ function sendMessangeToTg(text) {
         .catch(error => {
             console.error('Ошибка запроса:', error);
         });
+}
+
+btnYourOrder.onclick = function () {
+    divYourOrder.style.display = 'flex';
+}
+
+yourOrderBtnClose.onclick = function () {
+    divYourOrder.style.display = 'none';
 }

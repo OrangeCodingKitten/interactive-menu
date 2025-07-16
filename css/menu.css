@@ -120,6 +120,145 @@ nav {
 
 
 
+.btn-your-order {
+    line-height: 100%;
+    color: var(--color1);
+    padding: 8px;
+    background-color: var(--color2);
+    border: 3px solid var(--color1);
+    border-radius: 10px;
+    transition: 0.5s;
+    display: none;
+}
+
+.div-your-order {
+    z-index: 50;
+    top: 10px;
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+    background-color: var(--color2);
+    border: 2px var(--color1) solid;
+    position: absolute;
+    border-radius: 10px;
+    display: flex; /**ЗАМЕНИТЬ НА  display: none;**/
+    overflow: hidden;
+
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+    gap: 20px;
+
+    flex-direction: column;
+}
+
+.div-your-order h2 {
+    color: var(--color1);
+}
+
+.your-order-btn-close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    color: var(--color1);
+    background-color: var(--color2);
+    border: 2px var(--color1) solid;
+    font-size: 20px;
+}
+
+.your-order-cost {
+    background-color: var(--color1);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 4px;
+}
+
+.your-order-cards-list {
+    flex-grow: 1;
+    padding: 10px;
+    width: 100%;
+    overflow-y: auto;
+}
+
+.order-card {
+    width: 100%;
+    overflow: hidden;
+    border: 1px var(--color1) solid;
+    border-radius: 10px;
+    padding: 8px;
+    gap: 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+.order-head {
+    display: flex;
+    align-items: center;
+}
+
+.order-card__photo {
+    width: 150px;
+    height: 100px;
+    object-fit: cover;
+    object-position: center;
+    flex-shrink: 0;
+}
+
+.order-card__manager {
+    color: var(--color1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    flex-grow: 1;
+}
+
+.order-amaunt-span {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--color1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.order-card__total-cost {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+
+.order-card__info {
+    color: var(--color1);
+}
+
+.order-time {
+    color: var(--color1);
+}
+
+
+
+.btn-pay {
+    width: calc(100% - 20px);
+    height: 40px;
+    font-size: 18px;
+    background-color: var(--color3);
+    color: var(--color1);
+    border: 1px var(--color1) solid;
+    border-radius: 10px;
+}
+
+
+
 .basket-box h2 {
     color: var(--color1);
     font-size: 24px;
