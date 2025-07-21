@@ -509,6 +509,8 @@ function sendMessangeToTg(text) {
                 btnYourOrder.style.display = 'block';
                 // yourOrderCost.textContent = `Стоимость всех блюд: ${basketTotalCost}`
 
+                orderRender();
+
             } else {
                 console.error('Ошибка при отправке:', data);
             }
@@ -524,4 +526,31 @@ btnYourOrder.onclick = function () {
 
 yourOrderBtnClose.onclick = function () {
     divYourOrder.style.display = 'none';
+}
+
+const yourOrderCardsList = document.querySelector('.your-order-cards-list');
+
+
+function orderRender() {
+    yourOrderCardsList.innerHTML = '';
+    for (let i = 0; i < ORDER_DATA_STORE; i++) {
+        const orderCard = document.createElement('div');
+        orderCard.className = 'order-card';
+        orderCard.innerHTML = `
+        <div class="order-head">
+            <img class="order-card__photo" src="./img/Group 1-min.jpg" alt="">
+            <div class="order-card__manager">
+                <span class="order-amaunt-span">2</span>
+                <span class="order-card__total-cost">200₽</span>
+            </div>
+        </div>
+        <div class="order-card__info">
+            <h2>Каппучино</h2>
+            <h3>Cappucino</h3>
+            <p><span>350 ml</span>-<span>100₽</span></p>
+            <span class="order-time">14:45</span>
+        </div>
+        `
+        yourOrderCardsList.appendChild(orderCard);
+    }
 }
