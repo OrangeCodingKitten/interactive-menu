@@ -40,6 +40,9 @@ const divYourOrder = document.querySelector('.div-your-order');
 const yourOrderBtnClose = document.querySelector('.your-order-btn-close');
 const yourOrderCost = document.querySelector('.your-order-cost');
 
+const yourOrderCardsList = document.querySelector('.your-order-cards-list');
+
+
 let activeCategory;
 let tableNumber;
 let orderNumberForTg;
@@ -332,10 +335,14 @@ function basketCardRender() {
 
 
 btnSendOrder.addEventListener('click', () => {
-    if (typeof tableNumber === 'number') {
-        console.log('Номер стола - это число');
+    if (ORDER_DATA_STORE.length > 0) {
+        createMessageToTg('updateOrder');
     } else {
-        createDialogBox('reqestTableNumber', 'Пожалуйста введите номер стола');
+        if (typeof tableNumber === 'number') {
+            console.log('Номер стола - это число');
+        } else {
+            createDialogBox('reqestTableNumber', 'Пожалуйста введите номер стола');
+        }
     }
 })
 
@@ -439,6 +446,62 @@ ${messageFooter}
 
         }
 
+        case 'updateOrder': {
+            messageTitle = `🟡Обновление заказа`;
+            messageHead = `
+Язык посетителя - ${USER_LANG}
+Номер стола - ${tableNumber}
+Номер заказа - ${orderNumberForTg}
+            `;
+            messageBody = `📃 Список блюд:\n`;
+            messageBody += '\n🟨 Прошлые блюда:\n'
+            let numberPortionItem = 0;
+            let TotalCost = 0;
+ 
+            ORDER_DATA_STORE.forEach(orderItem => {
+                numberPortionItem++;
+                const orderItemName = orderItem.cardNameMainLang;
+                const orderItemCategory = orderItem.category;
+                const orderItemPortionName = orderItem.portionName;
+                const orderItemAmaunt = orderItem.portionAmaunt;
+                const orderItemCost = orderItem.portionCost * orderItem.portionAmaunt;
+                messageBody += `
+${numberPortionItem}. ${orderItemName} (${orderItemCategory})
+${orderItemPortionName} × ${orderItemAmaunt} = ${orderItemCost}${currency}
+                `
+                TotalCost += orderItemCost;
+            });
+            
+            messageBody += '\n🟩 Новые блюда:\n'
+
+            BASKET_DATA_STORE.forEach(basketItem => {
+                numberPortionItem++;
+                const basketItemName = basketItem.cardNameMainLang;
+                const basketItemCategory = basketItem.category;
+                const basketItemPortionName = basketItem.portionName;
+                const basketItemAmaunt = basketItem.portionAmaunt;
+                const basketItemCost = basketItem.portionCost * basketItemAmaunt;
+                messageBody += `
+${numberPortionItem}. ${basketItemName} (${basketItemCategory})
+${basketItemPortionName} × ${basketItemAmaunt} = ${basketItemCost}${currency}
+                `
+                TotalCost += basketItemCost;
+            });
+            messageFooter = `
+💰 Стоимость заказа: ${TotalCost}${currency}
+                `;
+            let fullMessageText = `
+${messageTitle}
+${messageHead}
+${messageBody}
+${messageFooter}
+                `
+            console.log(fullMessageText);
+            sendMessangeToTg(fullMessageText);
+
+            break;
+        }
+
         default:
             break;
     }
@@ -500,14 +563,26 @@ function sendMessangeToTg(text) {
             if (data.ok) {
                 console.log('Сообщение успешно отправлено');
 
+                BASKET_DATA_STORE.forEach(cardInfo => {
+                    cardInfo.time = nowTime();
+                });
+
                 ORDER_DATA_STORE.unshift(...BASKET_DATA_STORE);
                 BASKET_DATA_STORE = [];
                 basketCardRender();
                 categoriesCardsRender(activeCategory);
 
-                btnYourOrder.textContent = `Ваш заказ: ${orderNumberForHtml}`
-                btnYourOrder.style.display = 'block';
-                // yourOrderCost.textContent = `Стоимость всех блюд: ${basketTotalCost}`
+
+                // let orderTotalCost = 0;
+                // ORDER_DATA_STORE.forEach(itemCost => {
+                //     let itemOrderCost = itemCost.portionCost * itemCost.portionAmaunt;
+                //     orderTotalCost += itemOrderCost;
+                // });
+
+
+                // btnYourOrder.textContent = `Ваш заказ: ${orderNumberForHtml}`
+                // btnYourOrder.style.display = 'block';
+                // yourOrderCost.textContent = `Стоимость всех блюд: ${orderTotalCost}${currency}`
 
                 orderRender();
 
@@ -528,29 +603,52 @@ yourOrderBtnClose.onclick = function () {
     divYourOrder.style.display = 'none';
 }
 
-const yourOrderCardsList = document.querySelector('.your-order-cards-list');
+
 
 
 function orderRender() {
     yourOrderCardsList.innerHTML = '';
-    for (let i = 0; i < ORDER_DATA_STORE; i++) {
+
+
+    let orderTotalCost = 0;
+    ORDER_DATA_STORE.forEach(cardInfo => {
+        console.log(cardInfo);
+
         const orderCard = document.createElement('div');
         orderCard.className = 'order-card';
         orderCard.innerHTML = `
         <div class="order-head">
-            <img class="order-card__photo" src="./img/Group 1-min.jpg" alt="">
+            <img class="order-card__photo" src="${cardInfo.srcImg}" alt="">
             <div class="order-card__manager">
-                <span class="order-amaunt-span">2</span>
-                <span class="order-card__total-cost">200₽</span>
+                <span class="order-amaunt-span">${cardInfo.portionAmaunt}</span>
+                <span class="order-card__total-cost">${cardInfo.portionCost * cardInfo.portionAmaunt}${currency}</span>
             </div>
         </div>
         <div class="order-card__info">
-            <h2>Каппучино</h2>
-            <h3>Cappucino</h3>
-            <p><span>350 ml</span>-<span>100₽</span></p>
-            <span class="order-time">14:45</span>
+            <h2>${cardInfo.cardNameUserLang}</h2>
+            <h3>${cardInfo.cardNameMainLang}</h3>
+            <p><span>${cardInfo.portionName}</span> - <span>${cardInfo.portionCost}${currency}</span></p>
+            <span class="order-time">${cardInfo.time}</span>
         </div>
         `
         yourOrderCardsList.appendChild(orderCard);
+
+        orderTotalCost += cardInfo.portionCost * cardInfo.portionAmaunt;
+    });
+
+    if (ORDER_DATA_STORE.length > 0) {
+        btnYourOrder.textContent = `Ваш заказ: ${orderNumberForHtml}`
+        btnYourOrder.style.display = 'block';
     }
+
+    yourOrderCost.textContent = `Стоимость всех блюд: ${orderTotalCost}${currency}`
+}
+
+function nowTime() {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const formattedHours = hours < 10 ? '0' + hours : hours;
+    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+    return `${formattedHours}:${formattedMinutes}`;
 }

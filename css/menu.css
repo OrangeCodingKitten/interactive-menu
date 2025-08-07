@@ -141,7 +141,7 @@ nav {
     border: 2px var(--color1) solid;
     position: absolute;
     border-radius: 10px;
-    display: flex; /**ЗАМЕНИТЬ НА  display: none;**/
+    display: none; /**ЗАМЕНИТЬ НА  display: none;**/
     overflow: hidden;
 
     align-items: center;
@@ -184,6 +184,11 @@ nav {
     padding: 10px;
     width: 100%;
     overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    
 }
 
 .order-card {
@@ -195,6 +200,7 @@ nav {
     gap: 16px;
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
 }
 
 .order-head {
@@ -255,6 +261,7 @@ nav {
     color: var(--color1);
     border: 1px var(--color1) solid;
     border-radius: 10px;
+    flex-shrink: 0;
 }
 
 
