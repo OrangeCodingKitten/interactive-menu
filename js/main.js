@@ -42,6 +42,12 @@ const yourOrderCost = document.querySelector('.your-order-cost');
 
 const yourOrderCardsList = document.querySelector('.your-order-cards-list');
 
+const btnPay = document.querySelector('.btn-pay');
+
+btnPay.addEventListener('click', () => {
+    console.log('клик');
+    createDialogBox('reqestPaymentMethod', 'Выберите способ оплаты');
+})
 
 let activeCategory;
 let tableNumber;
@@ -389,9 +395,116 @@ function createDialogBox(type, text) {
             wrapper.appendChild(dialogBoxDiv);
             wrapper.classList.add('wrapper_active');
             break
+        };
+
+        case 'reqestPaymentMethod': {
+            const dialogBoxDiv = document.createElement('div');
+            dialogBoxDiv.className = 'dialog-box';
+            dialogBoxDiv.innerHTML = `
+                <p>${text}</p>
+                <div class="dialog-box__buttons">
+                    <button class="dialog-box__ok cash">Наличные</button>
+                    <button class="dialog-box__ok card">Карта</button>
+                    <button class="dialog-box__cansel">Отмена</button>
+                </div>
+            `
+            const dialogBoxCash = dialogBoxDiv.querySelector('.cash');
+            const dialogBoxCard = dialogBoxDiv.querySelector('.card');
+            const dialogBoxCansel = dialogBoxDiv.querySelector('.dialog-box__cansel');
+
+            dialogBoxCash.addEventListener('click', () => {
+                createMessageToTg('payment', 'Наличные');
+            })
+
+            dialogBoxCard.addEventListener('click', () => {
+                createMessageToTg('payment', 'Карта');
+            })
+
+            dialogBoxCansel.addEventListener('click', () => {
+                wrapper.classList.remove('wrapper_active')
+            })
+
+            wrapper.appendChild(dialogBoxDiv);
+            wrapper.classList.add('wrapper_active');
+            break
+        }
+            
+        case 'preloader': {
+            const dialogBoxDiv = document.createElement('div');
+            dialogBoxDiv.className = 'dialog-box';
+            dialogBoxDiv.innerHTML = `
+            <!-- Minimal SVG Loader (no JS, styles inside SVG) -->
+            <svg width="64" height="64" viewBox="0 0 44 44" role="img" aria-label="Загрузка…"
+                 xmlns="http://www.w3.org/2000/svg">
+              <title>${text}</title>
+              <style>
+                /* Цвета можно поменять здесь */
+                .track { stroke: #e6e6e6; }
+                .arc   { stroke: #111111; }
+            
+                .track, .arc {
+                  fill: none;
+                  stroke-width: 4;
+                }
+            
+                /* Центр вращения корректный для SVG */
+                .arc {
+                  stroke-linecap: round;
+                  stroke-dasharray: 80 200;        /* короткая дуга + пустота */
+                  transform-box: fill-box;
+                  transform-origin: 50% 50%;
+                  animation: spin 1.1s linear infinite, dash 1.5s ease-in-out infinite;
+                }
+            
+                /* Плавное вращение */
+                @keyframes spin {
+                  to { transform: rotate(360deg); }
+                }
+            
+                /* Лёгкое «дыхание» дуги */
+                @keyframes dash {
+                  0%   { stroke-dasharray: 10 270; stroke-dashoffset: 0; }
+                  50%  { stroke-dasharray: 80 200; stroke-dashoffset: -40; }
+                  100% { stroke-dasharray: 10 270; stroke-dashoffset: -280; }
+                }
+            
+                /* Уважение к пользователям с reduced motion */
+                @media (prefers-reduced-motion: reduce) {
+                  .arc { animation: none; }
+                }
+              </style>
+            
+              <!-- Фоновое кольцо (можно убрать, если нужен совсем минимализм) -->
+              <circle class="track" cx="22" cy="22" r="18" opacity="0.25"/>
+              <!-- Активная дуга -->
+              <circle class="arc"   cx="22" cy="22" r="18"/>
+            </svg>
+            
+            `
+
+            wrapper.appendChild(dialogBoxDiv);
+            wrapper.classList.add('wrapper_active');
+            break
         }
 
-            ;
+        case 'info': {
+            const dialogBoxDiv = document.createElement('div');
+            dialogBoxDiv.className = 'dialog-box';
+            dialogBoxDiv.innerHTML = `
+                <p>${text}</p>
+                <button class="dialog-box__cansel">Ок</button>
+            `
+
+            const dialogBoxCansel = dialogBoxDiv.querySelector('.dialog-box__cansel');
+
+            dialogBoxCansel.addEventListener('click', () => {
+                wrapper.classList.remove('wrapper_active')
+            })
+
+            wrapper.appendChild(dialogBoxDiv);
+            wrapper.classList.add('wrapper_active');
+            break
+        }
 
         default:
             break;
@@ -399,7 +512,7 @@ function createDialogBox(type, text) {
 
 }
 
-function createMessageToTg(type) {
+function createMessageToTg(type, paymentMethod = null) {
     let messageTitle = ``;
     let messageHead = ``;
     let messageBody = ``;
@@ -502,6 +615,49 @@ ${messageFooter}
             break;
         }
 
+        case 'payment': {
+            createOrderNumber();
+            messageTitle = `🟢Оплата заказа`;
+            messageHead = `
+Язык посетителя - ${USER_LANG}
+Номер стола - ${tableNumber}
+Тип оплаты - ${paymentMethod}
+Номер заказа - ${orderNumberForTg}
+            `;
+            messageBody = `📃 Список блюд:`;
+            let numberPortionItem = 0;
+            let TotalCost = 0;
+ 
+            ORDER_DATA_STORE.forEach(orderItem => {
+                numberPortionItem++;
+                const orderItemName = orderItem.cardNameMainLang;
+                const orderItemCategory = orderItem.category;
+                const orderItemPortionName = orderItem.portionName;
+                const orderItemAmaunt = orderItem.portionAmaunt;
+                const orderItemCost = orderItem.portionCost * orderItem.portionAmaunt;
+                messageBody += `
+${numberPortionItem}. ${orderItemName} (${orderItemCategory})
+${orderItemPortionName} × ${orderItemAmaunt} = ${orderItemCost}${currency}
+                `
+                TotalCost += orderItemCost;
+            });
+            messageFooter = `
+💰 Стоимость заказа: ${TotalCost}${currency}
+                `;
+            let fullMessageText = `
+${messageTitle}
+${messageHead}
+${messageBody}
+${messageFooter}
+                `
+            console.log(fullMessageText);
+            sendMessangeToTg(fullMessageText);
+
+
+
+            break;
+        }
+
         default:
             break;
     }
@@ -544,6 +700,10 @@ function createOrderNumber() {
 }
 
 function sendMessangeToTg(text) {
+    createDialogBox('preloader', 'Отправка...');
+
+    createDialogBox('info', 'Ваш заказ отправлен')
+
     const token = '8160508697:AAFJDed_MsKSYqDUgxQUDmiOJ_e-4oSc6Hw';
     const chatId = '7705038030';
     const url = `https://api.telegram.org/bot${token}/sendMessage`;

@@ -132,7 +132,7 @@ nav {
 }
 
 .div-your-order {
-    z-index: 50;
+    z-index: 19;
     top: 10px;
     right: 10px;
     bottom: 10px;
@@ -637,7 +637,7 @@ footer {
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 15;
+    z-index: 20;
     align-items: center;
     justify-content: center;
     opacity: 0;
