@@ -25,6 +25,9 @@ getDataStore()
     })
 
 const basketBtnOpen = document.querySelector('.basket-btn');
+const basketBtnQuantity = document.querySelector('.basket-btn-quantity');
+basketBtnQuantity.style.display = 'none';
+
 const basketBtnClouse = document.querySelector('.basket-clouse-btn');
 
 const basketBox = document.querySelector('.basket-box');
@@ -175,10 +178,14 @@ function categoriesCardsRender(category) {
                     btnMinus.addEventListener('click', () => {
                         portionData.action = 'minus';
                         updateBasket(portionData);
+
+                        basketBtnQuantity.textContent = BASKET_DATA_STORE.length;
                     });
                     btnPlus.addEventListener('click', () => {
                         portionData.action = 'plus';
                         updateBasket(portionData);
+
+                        basketBtnQuantity.textContent = BASKET_DATA_STORE.length;
                     });
                     portionListDiv.appendChild(portionItemDiv);
                 }
@@ -316,11 +323,15 @@ function basketCardRender() {
         btnPlus.addEventListener('click', () => {
             portionData.action = 'plus';
             updateBasket(portionData);
+
+            basketBtnQuantity.textContent = BASKET_DATA_STORE.length;
         });
 
         btnMinus.addEventListener('click', () => {
             portionData.action = 'minus';
             updateBasket(portionData);
+
+            basketBtnQuantity.textContent = BASKET_DATA_STORE.length;
         });
 
         basketListDiv.appendChild(basketCardDiv);
@@ -333,8 +344,12 @@ function basketCardRender() {
 
     if (BASKET_DATA_STORE.length > 0) {
         btnSendOrder.style.display = "block";
+        basketBtnOpen.classList.add('basket-btn_active');
+        basketBtnQuantity.style.display = 'flex';
     } else {
         btnSendOrder.style.display = "none";
+        basketBtnOpen.classList.remove('basket-btn_active');
+        basketBtnQuantity.style.display = 'none';
     }
 }
 
@@ -428,7 +443,7 @@ function createDialogBox(type, text) {
             wrapper.classList.add('wrapper_active');
             break
         }
-            
+
         case 'preloader': {
             const dialogBoxDiv = document.createElement('div');
             dialogBoxDiv.className = 'dialog-box';
@@ -506,6 +521,25 @@ function createDialogBox(type, text) {
             break
         }
 
+        case 'finalMessage': {
+            const dialogBoxDiv = document.createElement('div');
+            dialogBoxDiv.className = 'dialog-box';
+            dialogBoxDiv.innerHTML = `
+                <p>${text}</p>
+                <button class="dialog-box__cansel">Ок</button>
+            `
+
+            const dialogBoxCansel = dialogBoxDiv.querySelector('.dialog-box__cansel');
+
+            dialogBoxCansel.addEventListener('click', () => {
+                wrapper.classList.remove('wrapper_active')
+            })
+
+            wrapper.appendChild(dialogBoxDiv);
+            wrapper.classList.add('wrapper_active');
+            break
+        }
+
         default:
             break;
     }
@@ -553,7 +587,7 @@ ${messageBody}
 ${messageFooter}
                 `
             console.log(fullMessageText);
-            sendMessangeToTg(fullMessageText);
+            sendMessangeToTg(fullMessageText, type);
 
             break;
 
@@ -570,7 +604,7 @@ ${messageFooter}
             messageBody += '\n🟨 Прошлые блюда:\n'
             let numberPortionItem = 0;
             let TotalCost = 0;
- 
+
             ORDER_DATA_STORE.forEach(orderItem => {
                 numberPortionItem++;
                 const orderItemName = orderItem.cardNameMainLang;
@@ -584,7 +618,7 @@ ${orderItemPortionName} × ${orderItemAmaunt} = ${orderItemCost}${currency}
                 `
                 TotalCost += orderItemCost;
             });
-            
+
             messageBody += '\n🟩 Новые блюда:\n'
 
             BASKET_DATA_STORE.forEach(basketItem => {
@@ -610,7 +644,7 @@ ${messageBody}
 ${messageFooter}
                 `
             console.log(fullMessageText);
-            sendMessangeToTg(fullMessageText);
+            sendMessangeToTg(fullMessageText, type);
 
             break;
         }
@@ -627,7 +661,7 @@ ${messageFooter}
             messageBody = `📃 Список блюд:`;
             let numberPortionItem = 0;
             let TotalCost = 0;
- 
+
             ORDER_DATA_STORE.forEach(orderItem => {
                 numberPortionItem++;
                 const orderItemName = orderItem.cardNameMainLang;
@@ -651,7 +685,7 @@ ${messageBody}
 ${messageFooter}
                 `
             console.log(fullMessageText);
-            sendMessangeToTg(fullMessageText);
+            sendMessangeToTg(fullMessageText, type, TotalCost);
 
 
 
@@ -699,60 +733,53 @@ function createOrderNumber() {
     console.log(orderNumberForHtml);
 }
 
-function sendMessangeToTg(text) {
+function sendMessangeToTg(text, type, totalCost = 0) {
     createDialogBox('preloader', 'Отправка...');
 
-    createDialogBox('info', 'Ваш заказ отправлен')
+    setTimeout(() => {
+        const token = '8160508697:AAFJDed_MsKSYqDUgxQUDmiOJ_e-4oSc6Hw';
+        const chatId = '7705038030';
+        const url = `https://api.telegram.org/bot${token}/sendMessage`;
 
-    const token = '8160508697:AAFJDed_MsKSYqDUgxQUDmiOJ_e-4oSc6Hw';
-    const chatId = '7705038030';
-    const url = `https://api.telegram.org/bot${token}/sendMessage`;
-
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            chat_id: chatId,
-            text: text
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: text
+            })
         })
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.ok) {
-                console.log('Сообщение успешно отправлено');
-
-                BASKET_DATA_STORE.forEach(cardInfo => {
-                    cardInfo.time = nowTime();
-                });
-
-                ORDER_DATA_STORE.unshift(...BASKET_DATA_STORE);
-                BASKET_DATA_STORE = [];
-                basketCardRender();
-                categoriesCardsRender(activeCategory);
-
-
-                // let orderTotalCost = 0;
-                // ORDER_DATA_STORE.forEach(itemCost => {
-                //     let itemOrderCost = itemCost.portionCost * itemCost.portionAmaunt;
-                //     orderTotalCost += itemOrderCost;
-                // });
-
-
-                // btnYourOrder.textContent = `Ваш заказ: ${orderNumberForHtml}`
-                // btnYourOrder.style.display = 'block';
-                // yourOrderCost.textContent = `Стоимость всех блюд: ${orderTotalCost}${currency}`
-
-                orderRender();
-
-            } else {
-                console.error('Ошибка при отправке:', data);
-            }
-        })
-        .catch(error => {
-            console.error('Ошибка запроса:', error);
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    if(type === 'payment') {
+                        ORDER_DATA_STORE = [];
+                        divYourOrder.style.display = 'none';
+                        btnYourOrder.style.display = 'none';
+                        createDialogBox('finalMessage', `Сейчас к вам подойдет офицант. Сумма к оплате: ${totalCost}${currency}. Не забудьте оставить отзыв.`)
+                    } else {
+                        BASKET_DATA_STORE.forEach(cardInfo => {
+                            cardInfo.time = nowTime();
+                        });
+                        ORDER_DATA_STORE.unshift(...BASKET_DATA_STORE);
+                        BASKET_DATA_STORE = [];
+                        createDialogBox('info', 'Ваш заказ отправлен')
+                    }
+                    basketCardRender();
+                    categoriesCardsRender(activeCategory);
+                    orderRender();
+                } else {
+                    console.error('Ошибка при отправке:', data);
+                    createDialogBox('info', 'Ошибка при отправке. Попробуйте ещё раз')
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка запроса:', error);
+                createDialogBox('info', 'Отправка заказа временно недоступна. Пожалуйста, пригласите офицанта.')
+            });
+    }, 500);
 }
 
 btnYourOrder.onclick = function () {

@@ -71,12 +71,33 @@ nav {
     animation: out-moving 1s infinite alternate linear;
 }
 
-
-
-
 .basket-btn.move-left {
     transform: translateX(-48px);
 }
+
+.basket-btn-quantity {
+    width: 30px;
+    height: 20px;
+    background-color: var(--color3);
+    font-size: 16px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    position: absolute;
+    left: 40px;
+    bottom: 40px;
+
+    
+    /* убираем нижний правый угол */
+    clip-path: polygon(
+        0 0,     /* верхний левый */
+        100% 0,  /* верхний правый */
+        100% calc(100% - 5px), /* немного выше низа */
+        calc(100% - 5px) 100%, /* немного левее правого края */
+        0 100%   /* нижний левый */
+    );
+}
+
 
 .basket-clouse-btn {
     position: fixed;
